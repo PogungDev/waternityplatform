@@ -30,6 +30,7 @@ contract WaterNFT is ERC721, ERC721URIStorage, Ownable {
     event WellMinted(uint256 indexed tokenId, string location, uint256 capacity, address fieldPartner);
     event PartnerAuthorized(address indexed partner);
     event WellStatusUpdated(uint256 indexed tokenId, bool newStatus);
+    event WellBurned(uint256 indexed tokenId, address burner, string reason);
 
     // Constructor: Inisialisasi nama dan simbol NFT.
     constructor() ERC721("WaterWellNFT", "WWNFT") Ownable(msg.sender) {}
@@ -89,6 +90,75 @@ contract WaterNFT is ERC721, ERC721URIStorage, Ownable {
         require(wells[tokenId].fieldPartner == msg.sender || msg.sender == owner(), "WaterNFT: Not authorized to update status");
         wells[tokenId].isActive = newStatus;
         emit WellStatusUpdated(tokenId, newStatus);
+    }
+
+    /**
+     * @dev Burn/unmint a well NFT - Only owner or field partner can burn
+     * @param tokenId The token ID to burn
+     * @param reason Reason for burning (decommissioned, inactive, etc.)
+     */
+    function burnWell(uint256 tokenId, string memory reason) external {
+        require(_ownerOf(tokenId) != address(0), "WaterNFT: Well does not exist");
+        
+        address tokenOwner = ownerOf(tokenId);
+        address fieldPartner = wells[tokenId].fieldPartner;
+        
+        // Only token owner, field partner, or contract owner can burn
+        require(
+            msg.sender == tokenOwner || 
+            msg.sender == fieldPartner || 
+            msg.sender == owner(),
+            "WaterNFT: Not authorized to burn"
+        );
+
+        // Store data before burning for event
+        string memory location = wells[tokenId].location;
+        
+        // Clear well data
+        delete wells[tokenId];
+        
+        // Burn the NFT
+        _burn(tokenId);
+        
+        emit WellBurned(tokenId, msg.sender, reason);
+    }
+
+    /**
+     * @dev Emergency burn function - Only owner can force burn
+     * @param tokenId The token ID to burn
+     * @param reason Emergency reason
+     */
+    function emergencyBurn(uint256 tokenId, string memory reason) external onlyOwner {
+        require(_ownerOf(tokenId) != address(0), "WaterNFT: Well does not exist");
+        
+        // Clear well data
+        delete wells[tokenId];
+        
+        // Burn the NFT
+        _burn(tokenId);
+        
+        emit WellBurned(tokenId, msg.sender, reason);
+    }
+
+    /**
+     * @dev Get total number of wells minted (including burned)
+     */
+    function getTotalMinted() external view returns (uint256) {
+        return _tokenIdCounter;
+    }
+
+    /**
+     * @dev Check if a well exists
+     */
+    function wellExists(uint256 tokenId) external view returns (bool) {
+        return _ownerOf(tokenId) != address(0);
+    }
+
+    /**
+     * @dev Revoke partner authorization
+     */
+    function revokePartner(address partner) external onlyOwner {
+        authorizedPartners[partner] = false;
     }
 
     // Override fungsi tokenURI dari ERC721URIStorage.

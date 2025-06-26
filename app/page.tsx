@@ -9,13 +9,6 @@ import Link from "next/link"
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-50 to-yellow-50">
-      {/* Floating Chainlink Badge */}
-      <div className="fixed top-4 right-4 z-50">
-        <Badge className="bg-orange-500 text-white px-4 py-2 text-sm font-semibold animate-pulse">
-          🤖 Powered by ElizaOS + 7 Chainlink Services ✅
-        </Badge>
-      </div>
-
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}

@@ -4,16 +4,38 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Droplets, MenuIcon } from "lucide-react"
+import { Droplets, Zap, BarChart3, Users, Settings, MenuIcon } from "lucide-react"
+
+const navigation = [
+  {
+    name: 'Dashboard',
+    href: '/',
+    icon: BarChart3,
+  },
+  {
+    name: 'Wells',
+    href: '/wells',
+    icon: Droplets,
+  },
+  {
+    name: 'Chainlink',
+    href: '/chainlink',
+    icon: Zap,
+  },
+  {
+    name: 'Staking',
+    href: '/staking',
+    icon: Users,
+  },
+  {
+    name: 'Settings',
+    href: '/settings',
+    icon: Settings,
+  },
+]
 
 export function MainNav() {
   const pathname = usePathname()
-
-  const navItems = [
-    { href: "/investor", label: "Investor" },
-    { href: "/partner", label: "Field Partner" },
-    { href: "/how-it-works", label: "How It Works" },
-  ]
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/90 backdrop-blur-sm">
@@ -26,18 +48,26 @@ export function MainNav() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === item.href ? "text-primary font-semibold" : "text-muted-foreground",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navigation.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
+            
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'flex items-center space-x-2 text-sm font-medium transition-colors hover:text-primary',
+                  isActive
+                    ? 'text-black dark:text-white'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{item.name}</span>
+              </Link>
+            )
+          })}
         </nav>
 
         {/* Mobile Navigation */}
@@ -54,22 +84,59 @@ export function MainNav() {
               <span className="font-bold text-lg">Waternity</span>
             </Link>
             <nav className="grid gap-2 text-lg font-medium">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center py-2 text-lg font-semibold",
-                    pathname === item.href ? "text-primary" : "text-muted-foreground",
-                  )}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navigation.map((item) => {
+                const Icon = item.icon
+                const isActive = pathname === item.href
+                
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      'flex items-center py-2 text-lg font-semibold',
+                      isActive
+                        ? 'text-primary'
+                        : 'text-muted-foreground'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                )
+              })}
             </nav>
           </SheetContent>
         </Sheet>
       </div>
     </header>
+  )
+}
+
+export function MobileNav() {
+  const pathname = usePathname()
+
+  return (
+    <nav className="flex flex-col space-y-2">
+      {navigation.map((item) => {
+        const Icon = item.icon
+        const isActive = pathname === item.href
+        
+        return (
+          <Link
+            key={item.name}
+            href={item.href}
+            className={cn(
+              'flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent',
+              isActive
+                ? 'bg-accent text-accent-foreground'
+                : 'text-muted-foreground hover:text-accent-foreground'
+            )}
+          >
+            <Icon className="h-4 w-4" />
+            <span>{item.name}</span>
+          </Link>
+        )
+      })}
+    </nav>
   )
 }

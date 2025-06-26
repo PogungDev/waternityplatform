@@ -9,8 +9,21 @@
     "start": "next start -p 3333",
     "hardhat": "hardhat node",
     "deploy": "hardhat run scripts/deploy-simple.js --network localhost",
+    "deploy:chainlink": "hardhat run scripts/deploy-with-chainlink.js --network localhost",
     "deploy:full": "hardhat run scripts/deploy.js --network localhost",
-    "deploy:demo": "hardhat run scripts/demo-data.js --network localhost"
+    "deploy:demo": "hardhat run scripts/demo-data.js --network localhost",
+    "deploy:testnet": "hardhat run scripts/deploy-to-testnet.js --network sepolia",
+    "deploy:testnet-base": "hardhat run scripts/deploy-to-testnet.js --network baseSepolia",
+    "test": "hardhat test",
+    "test:unit": "hardhat test test/unit/**/*.js",
+    "test:integration": "hardhat test test/integration/**/*.js",
+    "test:coverage": "hardhat coverage",
+    "test:mint-burn": "hardhat run scripts/test-mint-burn.js --network localhost",
+    "setup:frontend": "node scripts/setup-frontend-addresses.js",
+    "setup:vercel": "node scripts/vercel-setup.js",
+    "build:production": "NODE_ENV=production npm run build",
+    "verify:sepolia": "hardhat verify --network sepolia",
+    "verify:base": "hardhat verify --network baseSepolia"
   },
   "dependencies": {
     "@chainlink/contracts": "^1.4.0",
